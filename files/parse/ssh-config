@@ -1,3 +1,5 @@
+CanonicalizeHostname yes
+CanonicalDomains linuxjedi.org
 Host *.linuxjedi.org
 	StrictHostKeyChecking false
 	UserKnownHostsFile /dev/null

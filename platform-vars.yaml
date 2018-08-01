@@ -1,7 +1,7 @@
 ---
 - hosts: "{{ target }}"
   name: Group by platform
-  remote_user: "{{ remote_user | default('build') }}"
+  remote_user: build
   tasks:
   - name: Adjust major version for Amazon Linux 2
     set_fact:
@@ -15,7 +15,6 @@
   name: Set CentOS7 build Variables
   tasks:
   - set_fact:
-      build_remote: centos
       sudoers_file: /etc/sudoers.d/90-cloud-init-users
       new_fs_type: xfs
 
@@ -24,6 +23,13 @@
   name: Set Amazon Linux 2 build Variables
   tasks:
   - set_fact:
-      build_remote: ec2-user
       sudoers_file: /etc/sudoers.d/90-cloud-init-users
       new_fs_type: xfs
+
+- hosts: dist_Fedora_28
+  connection: local
+  name: Set Fedora 28 build Variables
+  tasks:
+  - set_fact:
+      sudoers_file: /etc/sudoers.d/90-cloud-init-users
+      new_fs_type: ext4

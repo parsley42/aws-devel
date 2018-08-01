@@ -8,3 +8,12 @@ Requirements:
   * /ami/amzn2base
   * /ami/f28base
   * /ami/u16base
+* A permissive .ssh/config that doesn't sweat changing host keys, e.g.:
+```
+CanonicalizeHostname yes
+CanonicalDomains linuxjedi.org
+Host *.linuxjedi.org
+        StrictHostKeyChecking false
+        UserKnownHostsFile /dev/null
+        CheckHostIP false
+```

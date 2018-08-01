@@ -2,11 +2,11 @@
 # c9devel.yaml - playbook for creating a LinuxJedi devel bastion from
 # an ljbase AMI created with ljstandard.yaml
 
-# note: run aws_init first to create the build user
-
 - hosts: "{{ target }}"
-  remote_user: build
+  name: Set vars and wait for DNS
+  connection: local
   tasks:
+  # Make sure ansible will connect to the correct host
   - name: Set mountpoints for a Cloud9 developer instances
     set_fact:
       remote_user: build
@@ -19,6 +19,39 @@
         mount_point: /etc/httpd/conf.d
       - dir_name: ssl
         mount_point: /etc/pki
+  - name: Waiting for DNS to sync
+    command: echo
+    until: "lookup('dig', ansible_host ) == ec2_private_ip_address or lookup('dig', ansible_host ) == ec2_ip_address"
+    retries: 60
+    delay: 7
+    changed_when: false
+    when: ec2_ip_address is defined
+  - name: Wait for SSH
+    wait_for: host={{ ansible_host }} port=22 search_regex=OpenSSH
+
+# Generate new host keys or restore previous
+- hosts: "{{ target }}"
+  name: Re-use old host keys or store new ones
+  become: yes
+  remote_user: build
+  tasks:
+  - local_action: stat path="files/hostkeys/{{ inventory_hostname }}.tar.gz"
+    register: hkeys
+  - block:
+    - name: Create archive of host keys
+      shell: tar czf /tmp/{{ inventory_hostname }}-keys.tar.gz ssh_host_*
+      args:
+        chdir: /etc/ssh
+    - name: Fetch host keys
+      fetch: src=/tmp/{{ inventory_hostname }}-keys.tar.gz dest=files/hostkeys/{{ inventory_hostname }}.tar.gz flat=yes
+    when: hkeys.stat is defined and not hkeys.stat.exists
+  - block:
+    - name: Restore host keys
+      unarchive: src=files/hostkeys/{{ inventory_hostname }}.tar.gz dest=/etc/ssh
+    - name: Restart SSH to read host keys
+      service: name=sshd state=restarted
+    when: hkeys.stat is defined and hkeys.stat.exists
+
 # platform-specific definitions including data volumes
 - name: Set platform-specific variables
   import_playbook: platform-vars.yaml
@@ -28,12 +61,6 @@
   become: yes
   remote_user: build
   tasks:
-  - name: Remove launch user
-    user:
-      name: "{{ build_remote }}"
-      state: absent
-      remove: yes
-      force: yes
   - name: Data Volume role
     import_role:
       name: data_vol_single
@@ -59,13 +86,21 @@
       state: directory
       mode: 0700
     with_items: "{{ users }}"
-  - name: Install the User's SSH key
+  - name: Install the User's SSH private key
     copy:
         src: "files/{{ item.username }}/id_rsa"
         dest: "/home/{{ item.username }}/.ssh/id_rsa"
         owner: "{{ item.username }}"
         group: "{{ item.username }}"
         mode: 0600
+    with_items: "{{ users }}"
+  - name: Install the User's SSH public key
+    copy:
+        src: "files/{{ item.username }}/id_rsa.pub"
+        dest: "/home/{{ item.username }}/.ssh/id_rsa.pub"
+        owner: "{{ item.username }}"
+        group: "{{ item.username }}"
+        mode: 0644
     with_items: "{{ users }}"
   - name: Install the User's SSH config
     copy:
