@@ -2,23 +2,11 @@
 # addc9.yaml - playbook for adding Cloud9 user to an instance; primarily
 # for allowing Cloud9 logins to Gopherbot dev instances
 
-# note: run aws_init first to create the build user
-
-# platform-specific definitions including data volumes
-- name: Set platform-specific variables
-  import_playbook: platform-vars.yaml
-
 - hosts: "{{ target }}"
   name: Cloud9 User
   become: yes
   remote_user: build
   tasks:
-  - name: Remove launch user
-    user:
-      name: "{{ build_remote }}"
-      state: absent
-      remove: yes
-      force: yes
   - name: Create Users role
     import_role:
       name: ansible-users
@@ -41,13 +29,21 @@
       state: directory
       mode: 0700
     with_items: "{{ users }}"
-  - name: Install the User's SSH key
+  - name: Install the User's SSH private key
     copy:
         src: "files/{{ item.username }}/id_rsa"
         dest: "/home/{{ item.username }}/.ssh/id_rsa"
         owner: "{{ item.username }}"
         group: "{{ item.username }}"
         mode: 0600
+    with_items: "{{ users }}"
+  - name: Install the User's SSH public key
+    copy:
+        src: "files/{{ item.username }}/id_rsa.pub"
+        dest: "/home/{{ item.username }}/.ssh/id_rsa.pub"
+        owner: "{{ item.username }}"
+        group: "{{ item.username }}"
+        mode: 0644
     with_items: "{{ users }}"
   - name: Install the User's SSH config
     copy:

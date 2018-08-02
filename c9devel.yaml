@@ -1,12 +1,17 @@
 ---
 # c9devel.yaml - playbook for creating a LinuxJedi devel bastion from
 # an ljbase AMI created with ljstandard.yaml
+- hosts: all
+  connection: local
+  gather_facts: false
+  tasks:
+  - fail: msg="This playbook requires '-e target=<targethost>'"
+    when: target is undefined
 
 - hosts: "{{ target }}"
   name: Set vars and wait for DNS
   connection: local
   tasks:
-  # Make sure ansible will connect to the correct host
   - name: Set mountpoints for a Cloud9 developer instances
     set_fact:
       remote_user: build
@@ -19,6 +24,7 @@
         mount_point: /etc/httpd/conf.d
       - dir_name: ssl
         mount_point: /etc/pki
+  # Make sure ansible will connect to the correct host
   - name: Waiting for DNS to sync
     command: echo
     until: "lookup('dig', ansible_host ) == ec2_private_ip_address or lookup('dig', ansible_host ) == ec2_ip_address"
@@ -110,6 +116,17 @@
         group: "{{ item.username }}"
         mode: 0600
     with_items: "{{ users }}"
+
+- hosts: "{{ target }}"
+  become: yes
+  remote_user: build
+  tasks:
+  - name: Hostname
+    hostname: name={{ ansible_ssh_host }}
+  - name: Hosts file
+    lineinfile: dest=/etc/hosts regexp='^127\.0\.0\.1' line='127.0.0.1 {{ ansible_ssh_host }} localhost.localdomain localhost'
+  - name: sysconfig network
+    lineinfile: 'dest=/etc/sysconfig/network regexp="^HOSTNAME=" line="HOSTNAME={{ ansible_ssh_host }}"'
 
 - hosts: "{{ target }}"
   name: Remove build user authorized keys
