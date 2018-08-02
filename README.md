@@ -17,3 +17,14 @@ Host *.linuxjedi.org
         UserKnownHostsFile /dev/null
         CheckHostIP false
 ```
+
+## Creating a Cloud9 Developer Workstation Manually
+
+1. Create the instance from one of the templates; the instance name need not match the template name:
+```bash
+$ ec2 create -w f28devel c9-native f28devel
+```
+2. Run the `c9devel` playbook:
+```bash
+$ ansible-playbook c9devel.yaml -e target=f28devel
+```
