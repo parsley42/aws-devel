@@ -1,6 +1,6 @@
 ---
 # c9devel.yaml - playbook for creating a LinuxJedi devel bastion from
-# an ljbase AMI created with ljstandard.yaml
+# a LinuxJedi base image created with `linuxjedi-amis`
 - hosts: all
   connection: local
   gather_facts: false
@@ -61,6 +61,17 @@
 # platform-specific definitions including data volumes
 - name: Set platform-specific variables
   import_playbook: platform-vars.yaml
+  
+- hosts: dist_Fedora_28:&{{ target }}
+  name: Specialized updates for Fedora
+  become: yes
+  remote_user: build
+  tasks:
+  - name: Extra packages
+    dnf:
+      name:
+      - make
+      state: latest
 
 - hosts: "{{ target }}"
   name: Set up data volume and users
