@@ -1,7 +1,7 @@
 all: # keys must be unique, i.e. only one 'hosts' per group
   hosts:
-    parse:
-      ansible_host: parse.linuxjedi.org
+    parsley:
+      ansible_host: parsley.linuxjedi.org
     f28devel:
       ansible_host: f28devel.linuxjedi.org
     u16devel:
