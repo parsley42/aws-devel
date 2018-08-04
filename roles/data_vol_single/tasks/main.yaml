@@ -1,15 +1,15 @@
 ---
 - name: Create Partition
-  shell: 'echo ",,83" | sfdisk /dev/xvdf'
+  shell: 'echo ",,83" | sfdisk {{ data_vol_dev }}'
   args:
-    creates: /dev/xvdf1
+    creates: "{{ data_vol_part }}"
 - name: Wait for Partition
   wait_for:
-    path: /dev/xvdf1
+    path: "{{ data_vol_part }}"
 - name: Create Filesystem
-  filesystem: "fstype={{ new_fs_type }} dev=/dev/xvdf1"
+  filesystem: "fstype={{ new_fs_type }} dev={{ data_vol_part }}"
 - name: Mount Data Volume
-  mount: name=/data src=/dev/xvdf1 fstype={{ new_fs_type }} opts=nodev state=mounted
+  mount: name=/data src={{ data_vol_part }} fstype={{ new_fs_type }} opts=nodev state=mounted
 - name: Set Data Mount Permissions
   file: path=/data mode=0700
 - include: copy.yaml

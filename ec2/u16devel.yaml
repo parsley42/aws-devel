@@ -5,7 +5,7 @@ private_sg: true
 api_template:
   image_id: ${@ami|${/ami/u16base}}
   user_data: $UserDataStandard
-  instance_type: ${@type|c4.large}
+  instance_type: ${@type|c5.large}
   block_device_mappings:
   - device_name: /dev/sdf
     ebs:

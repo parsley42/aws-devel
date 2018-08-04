@@ -1,0 +1,3 @@
+---
+data_vol_dev: /dev/nvme1n1
+data_vol_part: /dev/nvme1n1p1
