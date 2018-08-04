@@ -61,9 +61,9 @@
 # platform-specific definitions including data volumes
 - name: Set platform-specific variables
   import_playbook: platform-vars.yaml
-  
+
 - hosts: dist_Fedora_28:&{{ target }}
-  name: Specialized updates for Fedora
+  name: Specialized updates for Fedora supporting Greenfield
   become: yes
   remote_user: build
   tasks:
@@ -71,6 +71,27 @@
     dnf:
       name:
       - make
+      - gcc-c++
+      - cmake
+      - gstreamer1
+      - gstreamer1-plugins-base
+      - gstreamer1-plugins-good
+      - gstreamer1-plugins-ugly
+      state: latest
+
+- hosts: dist_Amazon_2:&{{ target }}
+  name: Packages for Amazon Linux 2 supporting Greenfield
+  become: yes
+  remote_user: build
+  tasks:
+  - name: Extra packages
+    dnf:
+      name:
+      - gcc-c++
+      - cmake
+      - gstreamer1
+      - gstreamer1-plugins-base
+      - gstreamer1-plugins-good
       state: latest
 
 - hosts: "{{ target }}"
