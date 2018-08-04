@@ -91,32 +91,32 @@
       - java-1.8.0-openjdk-headless
       state: latest
 
-- hosts: dist_Amazon_2:&{{ target }}
-  name: Packages for Amazon Linux 2 supporting Greenfield
-  become: yes
-  remote_user: build
-  tasks:
-  - name: RPMFusion repository for CentOS7
-    yum:
-      name:
-      - https://download1.rpmfusion.org/free/el/rpmfusion-free-release-7.noarch.rpm
-  - name: Install RPMFusion signing key
-    rpm_key:
-      state: present
-      key: /etc/pki/rpm-gpg/RPM-GPG-KEY-rpmfusion-free-el-7
-  - name: Extra packages
-    yum:
-      name:
-      - gcc-c++
-      - cmake
-      - gstreamer1
-      - gstreamer1-plugins-base
-      - gstreamer1-plugins-good
-      - gstreamer1-plugins-ugly
-      - gstreamer1-devel
-      - gstreamer1-plugins-base-devel
-      - java-1.8.0-openjdk-headless
-      state: latest
+# - hosts: dist_Amazon_2:&{{ target }}
+#   name: Packages for Amazon Linux 2 supporting Greenfield
+#   become: yes
+#   remote_user: build
+#   tasks:
+#   - name: RPMFusion repository for CentOS7
+#     yum:
+#       name:
+#       - https://download1.rpmfusion.org/free/el/rpmfusion-free-release-7.noarch.rpm
+#   - name: Install RPMFusion signing key
+#     rpm_key:
+#       state: present
+#       key: /etc/pki/rpm-gpg/RPM-GPG-KEY-rpmfusion-free-el-7
+#   - name: Extra packages
+#     yum:
+#       name:
+#       - gcc-c++
+#       - cmake
+#       - gstreamer1
+#       - gstreamer1-plugins-base
+#       - gstreamer1-plugins-good
+#       - gstreamer1-plugins-ugly
+#       - gstreamer1-devel
+#       - gstreamer1-plugins-base-devel
+#       - java-1.8.0-openjdk-headless
+#       state: latest
 
 - hosts: "{{ target }}"
   name: Set up data volume and users
