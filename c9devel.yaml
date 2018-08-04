@@ -67,6 +67,15 @@
   become: yes
   remote_user: build
   tasks:
+  - name: RPMFusion repository
+    dnf:
+      name:
+      - https://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-28.noarch.rpm
+      state: present
+  - name: RPMFusion RPM key
+    rpm_key:
+      state: present
+      key: https://rpmfusion.org/keys?action=AttachFile&do=get&target=RPM-GPG-KEY-rpmfusion-free-fedora-28
   - name: Extra packages
     dnf:
       name:
@@ -76,7 +85,10 @@
       - gstreamer1
       - gstreamer1-plugins-base
       - gstreamer1-plugins-good
-#      - gstreamer1-plugins-ugly
+      - gstreamer1-plugins-ugly
+      - gstreamer1-devel
+      - gstreamer1-plugins-base-devel
+      - java-1.8.0-openjdk-headless
       state: latest
 
 - hosts: dist_Amazon_2:&{{ target }}
@@ -84,14 +96,26 @@
   become: yes
   remote_user: build
   tasks:
+  - name: RPMFusion repository for CentOS7
+    yum:
+      name:
+      - https://download1.rpmfusion.org/free/el/rpmfusion-free-release-7.noarch.rpm
+  - name: Install RPMFusion signing key
+    rpm_key:
+      state: present
+      key: /etc/pki/rpm-gpg/RPM-GPG-KEY-rpmfusion-free-el-7
   - name: Extra packages
-    dnf:
+    yum:
       name:
       - gcc-c++
       - cmake
       - gstreamer1
       - gstreamer1-plugins-base
       - gstreamer1-plugins-good
+      - gstreamer1-plugins-ugly
+      - gstreamer1-devel
+      - gstreamer1-plugins-base-devel
+      - java-1.8.0-openjdk-headless
       state: latest
 
 - hosts: "{{ target }}"
