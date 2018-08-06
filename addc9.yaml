@@ -20,6 +20,7 @@
     command: /usr/local/bin/c9install.sh
     args:
       creates: "/home/{{ item.username }}/.c9"
+    when: item.programmer is defined
     with_items: "{{ users }}"
   - name: Create User .ssh directory
     file:
@@ -53,3 +54,13 @@
         group: "{{ item.username }}"
         mode: 0600
     with_items: "{{ users }}"
+  - name: Install working gocode
+    copy:
+      src: files/gocode
+      dest: /usr/bin/gocode
+      mode: 0755
+  - name: Cloud9 prompt
+    copy:
+      src: files/cloud9.sh
+      dest: /etc/profile.d/cloud9.sh
+      mode: 0644

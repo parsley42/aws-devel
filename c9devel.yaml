@@ -168,10 +168,6 @@
         group: "{{ item.username }}"
         mode: 0600
     with_items: "{{ users }}"
-
-- hosts: "{{ target }}"
-  become: yes
-  tasks:
   - name: Install working gocode
     copy:
       src: files/gocode
@@ -182,6 +178,11 @@
       src: files/cloud9.sh
       dest: /etc/profile.d/cloud9.sh
       mode: 0644
+
+
+- hosts: "{{ target }}"
+  become: yes
+  tasks:
   - name: Hostname
     hostname: name={{ ansible_ssh_host }}
   - name: Hosts file
