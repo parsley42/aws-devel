@@ -134,6 +134,7 @@
     command: /usr/local/bin/c9install.sh
     args:
       creates: "/home/{{ item.username }}/.c9"
+    when: item.programmer is defined
     with_items: "{{ users }}"
   - name: Create User .ssh directory
     file:
