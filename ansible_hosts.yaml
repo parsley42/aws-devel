@@ -6,5 +6,9 @@ all: # keys must be unique, i.e. only one 'hosts' per group
       ansible_host: f28devel.linuxjedi.org
     u16devel:
       ansible_host: u16devel.linuxjedi.org
+    c9amzndevel:
+      ansible_host: c9amzndevel.linuxjedi.org
+    amzn2devel:
+      ansible_host: amzn2devel.linuxjedi.org
     bender:
       ansible_host: bender.linuxjedi.org

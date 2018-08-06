@@ -14,7 +14,6 @@
   tasks:
   - name: Set mountpoints for a Cloud9 developer instances
     set_fact:
-      remote_user: build
       mount_points:
       - dir_name: home
         mount_point: /home
@@ -39,7 +38,6 @@
 - hosts: "{{ target }}"
   name: Re-use old host keys or store new ones
   become: yes
-  remote_user: build
   tasks:
   - local_action: stat path="files/hostkeys/{{ inventory_hostname }}.tar.gz"
     register: hkeys
@@ -65,7 +63,6 @@
 - hosts: dist_Fedora_28:&{{ target }}
   name: Specialized updates for Fedora supporting Greenfield
   become: yes
-  remote_user: build
   tasks:
   - name: RPMFusion repository
     dnf:
@@ -94,7 +91,6 @@
 # - hosts: dist_Amazon_2:&{{ target }}
 #   name: Packages for Amazon Linux 2 supporting Greenfield
 #   become: yes
-#   remote_user: build
 #   tasks:
 #   - name: RPMFusion repository for CentOS7
 #     yum:
@@ -121,7 +117,6 @@
 - hosts: "{{ target }}"
   name: Set up data volume and users
   become: yes
-  remote_user: build
   tasks:
   - name: Data Volume role
     import_role:
@@ -175,7 +170,6 @@
 
 - hosts: "{{ target }}"
   become: yes
-  remote_user: build
   tasks:
   - name: Hostname
     hostname: name={{ ansible_ssh_host }}
@@ -187,7 +181,6 @@
 - hosts: "{{ target }}"
   name: Remove build user authorized keys
   become: yes
-  remote_user: build
   tasks:
   - file:
       path: /build/.ssh/authorized_keys

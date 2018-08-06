@@ -3,6 +3,10 @@
   name: Group by platform
   remote_user: build
   tasks:
+  - name: Adjust major version for Amazon Linux 1
+    set_fact:
+      ansible_distribution_major_version: 1
+    when: ansible_kernel | search("amzn1")
   - name: Adjust major version for Amazon Linux 2
     set_fact:
       ansible_distribution_major_version: 2
@@ -15,15 +19,20 @@
   name: Set CentOS7 build Variables
   tasks:
   - set_fact:
-      sudoers_file: /etc/sudoers.d/90-cloud-init-users
       new_fs_type: xfs
+
+- hosts: dist_Amazon_1
+  connection: local
+  name: Set Amazon Linux 1 build Variables
+  tasks:
+  - set_fact:
+      new_fs_type: ext4
 
 - hosts: dist_Amazon_2
   connection: local
   name: Set Amazon Linux 2 build Variables
   tasks:
   - set_fact:
-      sudoers_file: /etc/sudoers.d/90-cloud-init-users
       new_fs_type: xfs
 
 - hosts: dist_Fedora_28
@@ -31,5 +40,4 @@
   name: Set Fedora 28 build Variables
   tasks:
   - set_fact:
-      sudoers_file: /etc/sudoers.d/90-cloud-init-users
       new_fs_type: ext4
