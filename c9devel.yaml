@@ -172,21 +172,28 @@
 - hosts: "{{ target }}"
   become: yes
   tasks:
+  - name: Install working gocode
+    copy:
+      src: files/gocode
+      dest: /usr/bin/gocode
+      mode: 0755
+  - name: Cloud9 prompt
+    copy:
+      src: files/cloud9.sh
+      dest: /etc/profile.d/cloud9.sh
+      mode: 0644
   - name: Hostname
     hostname: name={{ ansible_ssh_host }}
   - name: Hosts file
     lineinfile: dest=/etc/hosts regexp='^127\.0\.0\.1' line='127.0.0.1 {{ ansible_ssh_host }} localhost.localdomain localhost'
   - name: sysconfig network
     lineinfile: 'dest=/etc/sysconfig/network regexp="^HOSTNAME=" line="HOSTNAME={{ ansible_ssh_host }}"'
-
-- hosts: "{{ target }}"
-  name: Remove build user authorized keys
-  become: yes
-  tasks:
-  - file:
+  - name: Remove build user authorized keys
+    file:
       path: /build/.ssh/authorized_keys
       state: absent
-  - user:
+  - name: Remove build user
+    user:
       name: build
       state: absent
       force: yes
