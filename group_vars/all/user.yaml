@@ -1,3 +1,0 @@
----
-# True for all LinuxJedi *base images
-ansible_user: build
