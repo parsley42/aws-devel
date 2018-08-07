@@ -1,4 +1,4 @@
-if [ "$PS1" != "" ]; then
+if [ "$PS1" != "" -a "$USER" != "root" ]; then
     # Turn on checkwinsize
     shopt -s checkwinsize
 

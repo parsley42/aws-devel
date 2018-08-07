@@ -23,6 +23,8 @@
         mount_point: /etc/httpd/conf.d
       - dir_name: ssl
         mount_point: /etc/pki
+      - dir_name: docker
+        mount_point: /var/lib/docker
   # Make sure ansible will connect to the correct host
   - name: Waiting for DNS to sync
     command: echo
@@ -87,6 +89,21 @@
       - gstreamer1-plugins-base-devel
       - java-1.8.0-openjdk-headless
       state: latest
+
+- hosts: dist_Amazon_2:&{{ target }}
+  name: Custom Configuration for Amazon Linux 2
+  become: yes
+  tasks:
+  - name: Extra packages
+    yum:
+      name:
+      - docker
+      state: latest
+  - name: Start Docker
+    systemd:
+      name: docker
+      state: started
+      enabled: yes
 
 # - hosts: dist_Amazon_2:&{{ target }}
 #   name: Packages for Amazon Linux 2 supporting Greenfield
