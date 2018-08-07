@@ -94,16 +94,11 @@
   name: Custom Configuration for Amazon Linux 2
   become: yes
   tasks:
-  - name: Extra packages
+  - name: Install extra packages
     yum:
       name:
       - docker
       state: latest
-  - name: Start Docker
-    systemd:
-      name: docker
-      state: started
-      enabled: yes
 
 # - hosts: dist_Amazon_2:&{{ target }}
 #   name: Packages for Amazon Linux 2 supporting Greenfield
@@ -196,6 +191,15 @@
       dest: /etc/profile.d/cloud9.sh
       mode: 0644
 
+- hosts: dist_Amazon_2:&{{ target }}
+  name: Custom Configuration for Amazon Linux 2
+  become: yes
+  tasks:
+  - name: Start Docker
+    systemd:
+      name: docker
+      state: started
+      enabled: yes
 
 - hosts: "{{ target }}"
   become: yes
