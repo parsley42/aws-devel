@@ -186,6 +186,7 @@
   - name: Install gocode
     copy:
       src: /build/go/bin/gocode
+      remote_src: yes
       dest: /usr/bin/gocode
       owner: root
       group: root
