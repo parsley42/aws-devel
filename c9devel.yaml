@@ -180,10 +180,15 @@
         group: "{{ item.username }}"
         mode: 0600
     with_items: "{{ users }}"
-  - name: Install working gocode
+  - name: Get gocode
+    become: no
+    command: go get github.com/nsf/gocode
+  - name: Install gocode
     copy:
-      src: files/gocode
+      src: /build/go/bin/gocode
       dest: /usr/bin/gocode
+      owner: root
+      group: root
       mode: 0755
   - name: Cloud9 prompt
     copy:
