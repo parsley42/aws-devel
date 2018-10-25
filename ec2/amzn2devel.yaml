@@ -5,7 +5,8 @@ private_sg: true
 api_template:
   image_id: ${@ami|${/ami/amzn2base}}
   user_data: $UserDataStandard
-  instance_type: ${@type|c5.large}
+  #instance_type: ${@type|c5.large}
+  instance_type: ${@type|c4.large}
   block_device_mappings:
   - device_name: /dev/sdf
     ebs:
