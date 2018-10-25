@@ -1,0 +1,4 @@
+---
+# c4.large; comment out for c5.large
+data_vol_dev: /dev/xvdf
+data_vol_part: /dev/xvdf1
